@@ -61,12 +61,23 @@ function loadKeywords() {
 }
 
 function loadCount() {
-  chrome.storage.local.get({ ljfHiddenCount: 0, ljfTotalCount: 0 }, (data) => {
-    if (data.ljfTotalCount === 0) {
-      countEl.textContent = 'Open a LinkedIn job search or posts search page to see stats.';
-    } else {
-      countEl.textContent = `${data.ljfHiddenCount} of ${data.ljfTotalCount} posts hidden on this page`;
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (!tabs[0]) {
+      countEl.textContent = 'Open a LinkedIn search or jobs page to see stats.';
+      return;
     }
+    chrome.tabs.sendMessage(tabs[0].id, { type: 'getCount' }, (resp) => {
+      if (chrome.runtime.lastError || !resp) {
+        // Content script not injected on this tab (e.g. not a LinkedIn search page)
+        countEl.textContent = 'Open a LinkedIn search or jobs page to see stats.';
+        return;
+      }
+      if (resp.total === 0) {
+        countEl.textContent = 'No post cards detected on this page yet.';
+      } else {
+        countEl.textContent = `${resp.hidden} of ${resp.total} posts hidden on this page`;
+      }
+    });
   });
 }
 
