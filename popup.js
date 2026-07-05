@@ -1,9 +1,9 @@
-const input       = document.getElementById('keywordInput');
-const addBtn      = document.getElementById('addBtn');
-const list        = document.getElementById('keywordList');
-const emptyMsg    = document.getElementById('emptyMsg');
-const countEl     = document.getElementById('hiddenCount');
-const toggle      = document.getElementById('enabledToggle');
+const input = document.getElementById('keywordInput');
+const addBtn = document.getElementById('addBtn');
+const list = document.getElementById('keywordList');
+const emptyMsg = document.getElementById('emptyMsg');
+const countEl = document.getElementById('hiddenCount');
+const toggle = document.getElementById('enabledToggle');
 const toggleLabel = document.getElementById('toggleLabel');
 const mainContent = document.getElementById('mainContent');
 
@@ -36,7 +36,7 @@ function render(keywords) {
   list.innerHTML = '';
   emptyMsg.style.display = keywords.length ? 'none' : 'block';
   keywords.forEach((kw, i) => {
-    const li   = document.createElement('li');
+    const li = document.createElement('li');
     const span = document.createElement('span');
     span.textContent = kw;
     const del = document.createElement('button');
@@ -63,17 +63,17 @@ function loadKeywords() {
 function loadCount() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (!tabs[0]) {
-      countEl.textContent = 'Open a LinkedIn search or jobs page to see stats.';
+      countEl.textContent = 'Make sure you are on Linkedin search page. Refresh the page, if extension isn\'t working';
       return;
     }
     chrome.tabs.sendMessage(tabs[0].id, { type: 'getCount' }, (resp) => {
       if (chrome.runtime.lastError || !resp) {
-        // Content script not injected on this tab (e.g. not a LinkedIn search page)
-        countEl.textContent = 'Open a LinkedIn search or jobs page to see stats.';
+        // Content script not injected on this tab
+        countEl.textContent = 'Make sure you are on Linkedin search page. Refresh the page, if extension isn\'t working';
         return;
       }
       if (resp.total === 0) {
-        countEl.textContent = 'No post cards detected on this page yet.';
+        countEl.textContent = 'Make sure you are on Linkedin search page. Refresh the page, if extension isn\'t working';
       } else {
         countEl.textContent = `${resp.hidden} of ${resp.total} posts hidden on this page`;
       }
